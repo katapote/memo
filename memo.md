@@ -3,8 +3,8 @@
 * Microsoft HTML Object Library
 * Microsoft Internet Controls
 
-2. コード入力
-``` vb
+2. コード入力<br>
+vb
 Sub test()
 
     Dim ie As Object
@@ -38,5 +38,3 @@ Sub test()
     Set ie = Nothing
 
 End Sub
-
-```
