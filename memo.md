@@ -5,6 +5,7 @@
 
 2. コード入力<br>
 vb
+```
 Sub test()<br>
 
     Dim ie As Object<br>
@@ -38,5 +39,5 @@ Sub test()<br>
     Set ie = Nothing  
 
 End Sub
-
+```/
 ## テストあり
