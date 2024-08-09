@@ -5,7 +5,6 @@
 
 2. コード入力<br>
 vb
-```
 Sub test()<br>
 
     Dim ie As Object<br>
@@ -26,10 +25,10 @@ Sub test()<br>
     ‘ HTMLドキュメントを取得<br>
     Set htmlDoc = ie.document  
 
-    ‘ HTMLドキュメントから特定の要素を取得（例：タグ名が”h1″のもの）　　
-    Set htmlElement = htmlDoc.getElementsByTagName(“h1”)  
+    ‘ HTMLドキュメントから特定の要素を取得（例：タグ名が”h1″のもの）<br>
+    Set htmlElement = htmlDoc.getElementsByTagName(“h1”) <br>
 
-    ‘ 取得した要素をExcelシートに転記　　
+    ‘ 取得した要素をExcelシートに転記<br>
     For i = 0 To htmlElement.Length – 1  
         Sheets(“Sheet1”).Cells(i + 1, 1).Value = htmlElement.Item(i).innerText  
     Next i  
@@ -39,5 +38,5 @@ Sub test()<br>
     Set ie = Nothing  
 
 End Sub
-```
+
 ## テストあり
