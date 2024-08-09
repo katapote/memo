@@ -39,5 +39,5 @@ Sub test()<br>
     Set ie = Nothing  
 
 End Sub
-```/
+```
 ## テストあり
