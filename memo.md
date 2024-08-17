@@ -56,5 +56,5 @@ vb
 <table>
 <caption>問題テーブル
 <thead>
-<tr><th>問題ID<th>問題文<th>解答<th>解説<th>URL<>
+<tr><th>問題ID<th>問題文<th>解答<th>解説<th>URL</tr>
 </table>
