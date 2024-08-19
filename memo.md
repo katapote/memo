@@ -102,6 +102,29 @@ SELECT（どのカラムから？）
 FROM（どのテーブルから？）
 WHERE（特定のデータを取得）
 
+<br>
+
+##DAO<br>
+
+    dim db as DAO.DataBase
+    set db =current database
+    今開いてるデータベースをセット！
+    
+    dim rs as DAO.recordset
+    set rs = db.recordset(セットしたいテーブル名とかクエリの結果)
+    
+    dim fld as DAO.field
+    set fld =rs.fields(セットしたいフィールド名)
+    
+    do until rs.Eof=true←見てるレコードが1番下になるまでつづけるよ
+    
+        rs.Edit ←レコードの内容を書き換えます
+        fld.value=1 
+        rs.Update
+        rs.movenext←つぎのレコードにうつるよ
+    
+    loop
+
 
 
 
