@@ -92,12 +92,15 @@ vb
     err1:
      
         MsgBox ("エラー：" & Err.Number)
-        
-    
+     
  
- 
-End Sub
+    End Sub
 
+https://qiita.com/chida09/items/d4b33a28b918958f267f
+
+SELECT（どのカラムから？）
+FROM（どのテーブルから？）
+WHERE（特定のデータを取得）
 
 
 
