@@ -56,3 +56,53 @@ vb
 <tr><th>回答者ID<th>問題ID<th>正誤フラグ<th>回答<th>出題順<th>作成日時</th>
 <tbody>
 <tr><td>スタート時、<br>出題数分の<br>同一レコードを作成<td>問題TBから<br>出題数分の<br>重複しない問題IDを取得<td>0:正 1:誤<br>すべて<br>1で作成<br>正解時<br>0にする<td>スタート時は<br>null<br>各回答<br>確定時<br>回答内容で<br>更新<td>スタート時<br>出題数分の<br>ランダムな<br>数字<td>スタート時刻</td>
+
+
+    Option Compare Database
+    Option Explicit
+     
+    Private Sub cmd_start_Click()
+        
+        'On Error GoTo err1
+        
+        Dim db As DAO.Database
+        Set db = CurrentDb
+        Dim sql As String
+        Dim q As Recordset
+        Dim strName As String
+        Dim L1 As Integer
+        
+        
+        sql = "SELECT count(*) FROM 解答者 WHERE 回答者名 = '" & txt_Name & "'"
+        
+        Set q = db.OpenRecordset(sql)
+        'L1 = q!A
+        If IsNull(q) Then
+            MsgBox "null"
+            Exit Sub
+        End If
+        
+        'DoCmd.RunSQL "INSERT INTO 解答者 (回答者名) values('" & txt_Name & "')"
+        
+        db.Close
+        Set q = Nothing
+        Set db = Nothing
+        Exit Sub
+        
+    err1:
+     
+        MsgBox ("エラー：" & Err.Number)
+        
+    
+ 
+ 
+End Sub
+
+
+
+
+
+
+
+
+
