@@ -173,5 +173,5 @@ WHERE（特定のデータを取得）
     Set db = Nothing
     End Sub
 
-
+！！！！！！！
 
