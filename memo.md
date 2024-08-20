@@ -125,5 +125,53 @@ WHERE（特定のデータを取得）
     
     loop
 
+    Sub CheckAndAddRecord()
+    Dim db As DAO.Database
+    Dim rs As DAO.Recordset
+    Dim tableName As String
+    Dim fieldName As String
+    Dim searchValue As Variant
+    Dim found As Boolean
+    
+    ' テーブル名、フィールド名、検索する値を指定
+    tableName = "YourTableName"  ' テーブル名
+    fieldName = "YourFieldName"  ' フィールド名
+    searchValue = "YourSearchValue"  ' 検索する値
+
+    ' データベースを開く
+    Set db = CurrentDb()
+    
+    ' テーブルのレコードセットを開く
+    Set rs = db.OpenRecordset(tableName, dbOpenDynaset)
+    
+    ' 初期値
+    found = False
+    
+    ' レコードセットのループ
+    Do While Not rs.EOF
+        If rs.Fields(fieldName).Value = searchValue Then
+            found = True
+            Exit Do
+        End If
+        rs.MoveNext
+    Loop
+    
+    ' 検索値が見つからなかった場合、新しいレコードを追加
+    If Not found Then
+        rs.AddNew
+        rs.Fields(fieldName).Value = searchValue
+        ' 他のフィールドにも値を設定する場合はここに追加
+        rs.Update
+        MsgBox "レコードを追加しました: " & searchValue
+    Else
+        MsgBox "レコードはすでに存在します: " & searchValue
+    End If
+    
+    ' リソースを解放
+    rs.Close
+    Set rs = Nothing
+    Set db = Nothing
+    End Sub
+
 
 
