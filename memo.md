@@ -162,4 +162,83 @@ WHERE（特定のデータを取得）
 
 <br>
 
+Microsoft AccessのDAO（Data Access Objects）は、VBA（Visual Basic for Applications）を使用してデータベースを操作するためのオブジェクトモデルです。DAOを使用すると、テーブル、クエリ、フィールド、レコードセット、データベース全体をプログラムで制御できます。
 
+### 主なDAOオブジェクトとそのプロパティ、メソッド
+
+#### 1. **Databaseオブジェクト**
+   - **役割**: データベース全体を表します。
+   - **主なプロパティ**:
+     - `Name`: データベースの名前
+     - `TableDefs`: データベース内のすべてのテーブルを表すコレクション
+     - `QueryDefs`: データベース内のすべてのクエリを表すコレクション
+   - **主なメソッド**:
+     - `OpenRecordset`: クエリやテーブルを開く
+     - `CreateTableDef`: 新しいテーブルを作成
+     - `CreateQueryDef`: 新しいクエリを作成
+
+#### 2. **TableDefオブジェクト**
+   - **役割**: データベース内のテーブルを表します。
+   - **主なプロパティ**:
+     - `Name`: テーブルの名前
+     - `Fields`: テーブル内のフィールドを表すコレクション
+   - **主なメソッド**:
+     - `CreateField`: 新しいフィールドを作成
+     - `Append`: フィールドやインデックスをテーブルに追加
+
+#### 3. **Recordsetオブジェクト**
+   - **役割**: テーブルやクエリの結果を表します。
+   - **主なプロパティ**:
+     - `EOF`: レコードセットの最後かどうかを示すブール値
+     - `Fields`: レコードのフィールドを表すコレクション
+   - **主なメソッド**:
+     - `MoveNext`: 次のレコードに移動
+     - `AddNew`: 新しいレコードを追加
+     - `Update`: 変更を保存
+
+#### 4. **Fieldオブジェクト**
+   - **役割**: テーブルやクエリ内の単一のフィールドを表します。
+   - **主なプロパティ**:
+     - `Name`: フィールドの名前
+     - `Value`: フィールドの値
+   - **主なメソッド**:
+     - `AppendChunk`: バイナリデータをフィールドに追加
+     - `GetChunk`: バイナリデータを取得
+
+### DAOの基本的な使い方
+
+以下に、DAOを使用してテーブル内のデータを読み取る簡単な例を示します。
+
+    vba
+    Sub ReadTableData()
+        Dim db As DAO.Database
+        Dim rs As DAO.Recordset
+        Dim fld As DAO.Field
+    
+        ' 現在のデータベースを開く
+        Set db = CurrentDb()
+        
+        ' テーブルを開く
+        Set rs = db.OpenRecordset("TableName")
+    
+        ' レコードセットを読み込み
+        Do Until rs.EOF
+            For Each fld In rs.Fields
+                Debug.Print fld.Name & ": " & fld.Value
+            Next fld
+            rs.MoveNext
+        Loop
+        
+        ' リソースを解放
+        rs.Close
+        Set rs = Nothing
+        Set db = Nothing
+    End Sub
+    ```
+
+### 参考: その他の主要オブジェクト
+- **QueryDefオブジェクト**: クエリを定義・実行するためのオブジェクト。
+- **Workspaceオブジェクト**: 複数のデータベース接続を管理。
+- **Relationオブジェクト**: テーブル間のリレーションを定義。
+
+DAOを使いこなすことで、Microsoft Access内のデータベース操作がプログラム的に柔軟に行えます。各オブジェクトやメソッドについて詳細を確認するには、AccessのVBAリファレンスを参照することをお勧めします。
