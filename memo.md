@@ -242,3 +242,43 @@ Microsoft AccessのDAO（Data Access Objects）は、VBA（Visual Basic for Appl
 - **Relationオブジェクト**: テーブル間のリレーションを定義。
 
 DAOを使いこなすことで、Microsoft Access内のデータベース操作がプログラム的に柔軟に行えます。各オブジェクトやメソッドについて詳細を確認するには、AccessのVBAリファレンスを参照することをお勧めします。
+
+Microsoft Accessでは、VBAを使って他のフォーム上のコントロール（テキストボックスなど）の値を取得し、それを変数に代入することができます。以下に、DAOを使用して同じデータベース内にある別のフォームの特定のテキストボックスの値を変数に代入するコードの例を示します。
+
+### コード例
+
+```vba
+Sub GetTextBoxValueFromAnotherForm()
+    Dim txtValue As String
+    Dim frm As Form
+
+    ' "YourFormName" を別のフォームの名前に置き換えます
+    ' フォームが開かれている必要があります
+    Set frm = Forms("YourFormName")
+    
+    ' "YourTextBoxName" をテキストボックスの名前に置き換えます
+    txtValue = frm.Controls("YourTextBoxName").Value
+
+    ' 変数に代入された値を使用します（例：メッセージボックスに表示）
+    MsgBox "テキストボックスの値は: " & txtValue
+    
+    ' 使用が終わったらオブジェクトを解放
+    Set frm = Nothing
+End Sub
+```
+
+### 説明
+1. **`Forms("YourFormName")`**:
+   - `YourFormName` には、値を取得したいフォームの名前を入れます。このフォームは事前に開かれている必要があります。
+
+2. **`frm.Controls("YourTextBoxName").Value`**:
+   - `YourTextBoxName` には、値を取得したいテキストボックスの名前を入れます。この名前は、フォーム上のテキストボックスの「名前」プロパティに対応します。
+
+3. **変数 `txtValue`**:
+   - ここに、テキストボックスの値が代入されます。変数の型をテキストボックスのデータ型に合わせて変更してください（例：整数型なら `Dim txtValue As Integer`）。
+
+4. **オブジェクトの解放**:
+   - 処理が終わったら、オブジェクトを解放するために `Set frm = Nothing` を使用します。
+
+### 使用例
+このコードは、他のフォームのテキストボックスから値を取得し、何か別の処理を行いたいときに便利です。例えば、メインフォームから別のフォームにあるデータを参照したり、その値を計算に使用したりできます。
