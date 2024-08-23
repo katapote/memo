@@ -551,3 +551,57 @@ Excelブックを開いたときに「コンテンツの有効化」をクリッ
    - ネットワークの問題が発生した場合、ウェブ上で開かれているファイルや、クラウドに保存されているファイルへのアクセスに問題が生じることがありますが、これが原因でファイルが自動的に閉じることは通常はありません。
 
 ファイルが自動的に閉じられるという現象が起こる場合は、他の要因（例えば、マクロ、アドイン、Excelやネットワークの設定、ファイルの破損など）が原因である可能性が高いです。このような問題が頻繁に発生する場合は、ネットワークやファイル共有設定、またはExcel自体の設定を確認する必要があります。
+
+    Sub AssignRandomOrder()
+        Dim db As DAO.Database
+        Dim rst As DAO.Recordset
+        Dim userID As Long
+        Dim count As Integer
+        Dim i As Integer
+        Dim availableNumbers As Collection
+        Dim randomIndex As Integer
+        Dim selectedNumber As Integer
+        
+        ' ユーザーIDを設定
+        userID = 123 ' ここに特定のユーザーIDを入力
+    
+        ' データベースを開く
+        Set db = CurrentDb
+    
+        ' 指定したユーザーIDに一致するレコードを取得
+        Set rst = db.OpenRecordset("SELECT * FROM TableName WHERE UserID = " & userID, dbOpenDynaset)
+        
+        ' レコード数をカウント
+        rst.MoveLast
+        count = rst.RecordCount
+        rst.MoveFirst
+    
+        ' 1〜countまでの数値を保持するコレクションを作成
+        Set availableNumbers = New Collection
+        For i = 1 To count
+            availableNumbers.Add i
+        Next i
+    
+        ' 各レコードのorderフィールドをランダムな数値で更新
+        Do Until rst.EOF
+            ' ランダムに数値を選択
+            randomIndex = Int((availableNumbers.Count) * Rnd + 1)
+            selectedNumber = availableNumbers(randomIndex)
+            
+            ' 選択した数値をorderフィールドに設定
+            rst.Edit
+            rst!order = selectedNumber
+            rst.Update
+    
+            ' 使用済みの数値をコレクションから削除
+            availableNumbers.Remove randomIndex
+    
+            ' 次のレコードへ
+            rst.MoveNext
+        Loop
+    
+        ' リソースの解放
+        rst.Close
+        Set rst = Nothing
+        Set db = Nothing
+    End Sub
