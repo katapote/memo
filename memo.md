@@ -672,4 +672,11 @@ Excelブックを開いたときに「コンテンツの有効化」をクリッ
         rst.Close
         Set rst = Nothing
         Set db = Nothing
-    End Sub
+    End Sub    
+
+
+
+###sql
+
+
+select top 5 ＊ from 問題テーブル　where 条件　order by rnd (-timer()＊問題id)を、履歴TBにつっこむ（ユーザーidとupdateもいっしょに）
