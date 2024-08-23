@@ -680,3 +680,37 @@ Excelブックを開いたときに「コンテンツの有効化」をクリッ
 
 
 select top 5 ＊ from 問題テーブル　where 条件　order by rnd (-timer()＊問題id)を、履歴TBにつっこむ（ユーザーidとupdateもいっしょに）
+
+
+Sub SelectAndInsertRandomRecords()
+    Dim db As DAO.Database
+    Dim rst As DAO.Recordset
+    Dim strSQL As String
+    Dim userID As Long
+    Dim nowTime As String
+    
+    ' 初期設定
+    Set db = CurrentDb()
+    userID = 1234 ' ここでユーザーIDを設定
+    nowTime = Format(Now(), "yyyy/mm/dd hh:nn:ss")
+    
+    ' 抽出クエリ
+    strSQL = "SELECT TOP 5 * FROM 問題テーブル " & _
+             "WHERE (モード = 1 OR モード = 3) AND (スキル = 1 OR スキル = 3) " & _
+             "ORDER BY Rnd(-Timer() * 問題ID);"
+    
+    ' レコードセットの取得
+    Set rst = db.OpenRecordset(strSQL)
+    
+    ' 履歴テーブルに挿入
+    Do While Not rst.EOF
+        db.Execute "INSERT INTO 履歴TB (問題ID, ユーザーID, 更新日時) VALUES (" & _
+                   rst!問題ID & ", " & userID & ", #" & nowTime & "#);"
+        rst.MoveNext
+    Loop
+    
+    ' クリーンアップ
+    rst.Close
+    Set rst = Nothing
+    Set db = Nothing
+End Sub
