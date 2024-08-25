@@ -11,7 +11,9 @@
         * [テキストボックスの「Change」イベントを使う](#textBox_change)
         * [デフォーカス時に自動的に処理を行う](#defocus)
         * [0.5秒ごとのタイマーを設定する方法](#timer)
+        
 <a id="scraping"></a>
+
 ## スクレイピングについて
 1. ツール、参照設定から以下2項目にチェック
 * Microsoft HTML Object Library
