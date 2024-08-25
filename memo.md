@@ -1,5 +1,10 @@
 
-[スクレイピング](#スクレイピングについて)
+* [スクレイピング](#スクレイピングについて)<br>
+* [対応コードテストDB](#DBcodetest)<br>
+* [DAO](#dao)<br>
+    * [主なDAOオブジェクトとそのプロパティ、メソッド](#daoObject)
+    * [DAOの基本的な使い方](#howTo)
+    * [参考: その他の主要オブジェクト](#info)
 <a id="scraping"></a>
 ## スクレイピングについて
 1. ツール、参照設定から以下2項目にチェック
@@ -45,6 +50,7 @@ vb
     
     End sub
 
+<a id='DBcodetest'></a>
 ## 応対コードテスト　DB
      
     
@@ -94,6 +100,7 @@ WHERE（特定のデータを取得）
 
 <br>
 
+<a id='dao'></a>
 ## DAO<br>
 
     dim db as DAO.DataBase
@@ -167,6 +174,7 @@ WHERE（特定のデータを取得）
 
 Microsoft AccessのDAO（Data Access Objects）は、VBA（Visual Basic for Applications）を使用してデータベースを操作するためのオブジェクトモデルです。DAOを使用すると、テーブル、クエリ、フィールド、レコードセット、データベース全体をプログラムで制御できます。
 
+<a id='daoObject'></a>
 ### 主なDAOオブジェクトとそのプロパティ、メソッド
 
 #### 1. **Databaseオブジェクト**
@@ -208,6 +216,7 @@ Microsoft AccessのDAO（Data Access Objects）は、VBA（Visual Basic for Appl
      - `AppendChunk`: バイナリデータをフィールドに追加
      - `GetChunk`: バイナリデータを取得
 
+<a id='howTo'></a>
 ### DAOの基本的な使い方
 
 以下に、DAOを使用してテーブル内のデータを読み取る簡単な例を示します。
@@ -238,6 +247,8 @@ Microsoft AccessのDAO（Data Access Objects）は、VBA（Visual Basic for Appl
         Set db = Nothing
     End Sub
     ```
+
+<a id='info'></a>
 
 ### 参考: その他の主要オブジェクト
 - **QueryDefオブジェクト**: クエリを定義・実行するためのオブジェクト。
