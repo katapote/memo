@@ -949,3 +949,88 @@ End Sub
     ```
 
 これにより、`History`テーブルと`Problem`テーブルの情報を組み合わせて、フォーム上に問題テキストを表示できます。
+
+
+
+Sub SummarizePartnerData()
+    Dim ws As Worksheet
+    Dim summaryWs As Worksheet
+    Dim lastRow As Long
+    Dim summaryRow As Long
+    Dim interviewResult As String
+    Dim proposalCount As Long
+    Dim interviewCount As Long
+    Dim declineCount As Long
+    Dim ngCount As Long
+    Dim hireCount As Long
+    Dim i As Long
+    
+    ' 集計結果を表示するシートの名前を指定
+    Set summaryWs = ThisWorkbook.Sheets("Summary")
+    summaryWs.Cells.Clear ' 既存のデータをクリア
+    summaryRow = 2 ' 集計結果を入力開始する行番号
+    
+    ' ヘッダーを設定
+    summaryWs.Cells(1, 1).Value = "月"
+    summaryWs.Cells(1, 2).Value = "提案件数"
+    summaryWs.Cells(1, 3).Value = "面談実施数"
+    summaryWs.Cells(1, 4).Value = "面談辞退数"
+    summaryWs.Cells(1, 5).Value = "NG数"
+    summaryWs.Cells(1, 6).Value = "採用数"
+    
+    ' ワークシートをループ
+    For Each ws In ThisWorkbook.Worksheets
+        ' シート名が月の形式（2404、２４０４など）かどうかをチェック
+        If IsNumeric(ws.Name) And Len(ws.Name) = 4 Then
+            ' 各変数をリセット
+            proposalCount = 0
+            interviewCount = 0
+            declineCount = 0
+            ngCount = 0
+            hireCount = 0
+            
+            ' 最終行を取得
+            lastRow = ws.Cells(ws.Rows.Count, "A").End(xlUp).Row
+            
+            ' データをループ
+            For i = 2 To lastRow ' 1行目はヘッダーなので2行目から開始
+                interviewResult = ws.Cells(i, "C").Value ' 面談結果の列がC列と仮定
+                
+                ' 提案件数のカウント (スライドと保留を除く)
+                If interviewResult <> "スライド" And interviewResult <> "保留" Then
+                    proposalCount = proposalCount + 1
+                End If
+                
+                ' 面談実施数のカウント (面談辞退を除く)
+                If interviewResult = "採用" Or interviewResult = "NG" Then
+                    interviewCount = interviewCount + 1
+                End If
+                
+                ' 面談辞退数のカウント
+                If interviewResult = "面談辞退" Or interviewResult = "辞退" Then
+                    declineCount = declineCount + 1
+                End If
+                
+                ' NG数のカウント
+                If interviewResult = "NG" Then
+                    ngCount = ngCount + 1
+                End If
+                
+                ' 採用数のカウント
+                If interviewResult = "採用" Then
+                    hireCount = hireCount + 1
+                End If
+            Next i
+            
+            ' 結果をサマリーシートに記入
+            summaryWs.Cells(summaryRow, 1).Value = ws.Name ' 月
+            summaryWs.Cells(summaryRow, 2).Value = proposalCount ' 提案件数
+            summaryWs.Cells(summaryRow, 3).Value = interviewCount ' 面談実施数
+            summaryWs.Cells(summaryRow, 4).Value = declineCount ' 面談辞退数
+            summaryWs.Cells(summaryRow, 5).Value = ngCount ' NG数
+            summaryWs.Cells(summaryRow, 6).Value = hireCount ' 採用数
+            
+            summaryRow = summaryRow + 1 ' 次の行に移動
+        End If
+    Next ws
+End Sub
