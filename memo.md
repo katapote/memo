@@ -749,3 +749,91 @@ Sub SelectAndInsertRandomRecords()
     Set rst = Nothing
     Set db = Nothing
 End Sub
+
+
+Private Sub btn_Start_Click()
+    Dim db As DAO.Database
+    Dim rs As DAO.Recordset
+    Dim rsHistory As DAO.Recordset
+    Dim strSQL As String
+    Dim UserID As String
+    Dim ModeID As Integer
+    Dim i As Integer
+    Dim StartTime As Date
+    
+    ' フォームからUserIDとModeIDを取得
+    UserID = Me.lb_UserID.Caption
+    ModeID = Me.cbo_GameMode.Value
+    
+    ' 問題テーブルから5件のランダムなレコードを取得
+    strSQL = "SELECT TOP 5 * FROM Problem WHERE ModeID = " & ModeID & " ORDER BY Rnd(ID);"
+    Set db = CurrentDb
+    Set rs = db.OpenRecordset(strSQL)
+    
+    ' 履歴テーブルを開いてレコードを挿入
+    Set rsHistory = db.OpenRecordset("History", dbOpenDynaset)
+    
+    i = 1
+    Do While Not rs.EOF
+        rsHistory.AddNew
+        rsHistory!UserID = UserID
+        rsHistory!QuestionID = rs!ID
+        rsHistory!Order = i
+        rsHistory!回答中フラグ = True
+        rsHistory.Update
+        i = i + 1
+        rs.MoveNext
+    Loop
+    
+    ' 最初の問題を表示
+    Me.Filter = "Order = 1"
+    Me.FilterOn = True
+    
+    ' タイマーを開始
+    StartTime = Now
+    Me.TimerInterval = 1000 ' 1秒ごとにタイマーを設定
+    Me.Tag = StartTime ' フォームのTagプロパティに開始時間を保存
+    
+    rs.Close
+    rsHistory.Close
+    Set rs = Nothing
+    Set rsHistory = Nothing
+    Set db = Nothing
+End Sub
+
+    Private Sub btn_SubmitAnswer_Click()
+        Dim db As DAO.Database
+        Dim rs As DAO.Recordset
+        Dim ElapsedTime As Double
+        Dim CurrentOrder As Integer
+        
+        ' タイマーを停止
+        Me.TimerInterval = 0
+        ElapsedTime = DateDiff("s", Me.Tag, Now) ' 経過時間を計算
+        
+        ' 履歴テーブルを経過時間で更新
+        Set db = CurrentDb
+        Set rs = db.OpenRecordset("SELECT * FROM History WHERE UserID = '" & Me.lb_UserID.Caption & "' AND Order = " & Me!Order, dbOpenDynaset)
+        
+        If Not rs.EOF Then
+            rs.Edit
+            rs!TimeElapsed = ElapsedTime
+            rs!回答中フラグ = False
+            rs.Update
+        End If
+        
+        rs.Close
+        Set rs = Nothing
+        Set db = Nothing
+        
+        ' 次の問題へ移動
+        CurrentOrder = Me!Order
+        If CurrentOrder < 5 Then
+            Me.Filter = "Order = " & CurrentOrder + 1
+            Me.FilterOn = True
+            Me.Tag = Now ' 次の問題のために開始時間をリセット
+            Me.TimerInterval = 1000 ' タイマーを再スタート
+        Else
+            MsgBox "すべての問題が完了しました！", vbInformation
+        End If
+    End Sub
