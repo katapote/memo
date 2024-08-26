@@ -874,3 +874,78 @@ End Sub
 - フォーム上に配置した`txt_Timer`テキストボックスに、経過時間が「分:秒」の形式でリアルタイムに表示されます。ユーザーが「回答ボタン」を押して次の問題に進むとき、タイマーがリセットされ、新しい質問に対して再び経過時間が表示されるようになります。
 
 これにより、フォームにリアルタイムのタイマー表示が実現できます。
+
+
+問題IDを基に`Problem`（問題マスタ）テーブルから該当するレコードを検索し、その問題フィールドの内容をフォームのラベルに表示させるには、以下のようにVBAコードを実装します。
+
+### 1. **フォームの準備**
+   - フォームに、問題を表示するためのラベル（例: `lbl_Question`）を用意します。
+
+### 2. **VBAコードの実装**
+
+   以下のVBAコードをフォームに追加してください。このコードは、指定された条件に合致する`History`テーブルのレコードから`問題ID`を取得し、それを基に`Problem`テーブルから該当する問題テキストを検索し、フォームのラベルに表示します。
+
+    ```vba
+    Private Sub DisplayQuestion()
+        Dim db As DAO.Database
+        Dim rsHistory As DAO.Recordset
+        Dim rsProblem As DAO.Recordset
+        Dim strSQL As String
+        Dim UserID As String
+        Dim QuestionID As Long
+        
+        ' フォーム上のラベルからユーザーIDを取得
+        UserID = Me.lb_UserID.Caption
+        
+        ' Historyテーブルから条件に合致する問題IDを取得するSQL
+        strSQL = "SELECT 問題ID FROM History WHERE UserID = '" & UserID & "' AND 回答中フラグ = True AND [Order] = 1"
+        
+        ' データベースとHistoryのレコードセットを開く
+        Set db = CurrentDb
+        Set rsHistory = db.OpenRecordset(strSQL)
+        
+        ' レコードが見つかった場合、問題IDを取得
+        If Not rsHistory.EOF Then
+            QuestionID = rsHistory!問題ID
+            
+            ' Problemテーブルから該当する問題を取得するSQL
+            strSQL = "SELECT 問題 FROM Problem WHERE ID = " & QuestionID
+            Set rsProblem = db.OpenRecordset(strSQL)
+            
+            ' 問題フィールドのテキストをラベルに表示
+            If Not rsProblem.EOF Then
+                Me.lbl_Question.Caption = rsProblem!問題
+            Else
+                MsgBox "該当する問題が問題マスタに見つかりませんでした。", vbExclamation
+            End If
+            
+            rsProblem.Close
+        Else
+            MsgBox "該当するレコードが履歴テーブルに見つかりませんでした。", vbExclamation
+        End If
+        
+        ' レコードセットとデータベースをクローズ
+        rsHistory.Close
+        Set rsHistory = Nothing
+        Set rsProblem = Nothing
+        Set db = Nothing
+    End Sub
+    ```
+
+### 3. **コードの動作**
+- このコードは、`History`テーブルから`UserID`、`回答中フラグ`が`True`、および`Order`が`1`のレコードを検索し、そのレコードの`問題ID`を取得します。
+- 取得した`問題ID`を基に、`Problem`テーブルから対応する問題テキストを検索し、そのテキストをフォームのラベル（`lbl_Question`）に表示します。
+- もし、該当するレコードや問題が見つからない場合は、メッセージボックスでユーザーに通知します。
+
+### 4. **コードの実行タイミング**
+- このサブルーチンを、フォームが開かれたときや特定のボタンが押されたときに呼び出すことで、`lbl_Question`ラベルに問題テキストが表示されるようにできます。
+
+例として、フォームがロードされたときにこのサブルーチンを実行する場合は、`Form_Load`イベントにこのサブルーチンを呼び出すコードを追加します:
+
+    ```vba
+    Private Sub Form_Load()
+        Call DisplayQuestion
+    End Sub
+    ```
+
+これにより、`History`テーブルと`Problem`テーブルの情報を組み合わせて、フォーム上に問題テキストを表示できます。
