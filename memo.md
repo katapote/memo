@@ -1095,3 +1095,38 @@ End Sub
 ---
 
 この設計書をもとに、具体的な開発を進めていくことが可能です。何か追加の要件や修正点があれば、お知らせください。
+
+
+週ではなく「何日後」という形で指定する場合は、`DateAdd`関数の間隔パラメータを `"d"` に変更します。この `"d"` は日数を意味します。
+
+以下に、指定した日数後の日付を取得するVBAコードの例を示します。
+
+```vba
+Sub CalculateDateAfterDays()
+    Dim startDate As Date
+    Dim daysToAdd As Integer
+    Dim dateAfterDays As Date
+    
+    ' 開始日付を設定（例として2024年8月27日を使用）
+    startDate = DateSerial(2024, 8, 27)
+    
+    ' 加算する日数を設定（例: 21日後）
+    daysToAdd = 21
+    
+    ' 指定した日数後の日付を取得
+    dateAfterDays = DateAdd("d", daysToAdd, startDate)
+    
+    ' 結果をメッセージボックスで表示
+    MsgBox daysToAdd & "日後の日付は: " & dateAfterDays
+End Sub
+```
+
+### 説明:
+- `DateAdd("d", daysToAdd, startDate)`:
+  - `"d"` は日数を意味します。
+  - `daysToAdd` は加算する日数です。この例では21日後の日付を取得します。
+  - `startDate` は基準となる日付です。
+
+このコードを実行すると、指定した日付から指定した日数後の日付が計算され、メッセージボックスで表示されます。
+
+日数を他の値に変更することで、任意の日数後の日付を取得できます。例えば、3週間後の日付を取得する場合は、`daysToAdd = 21`として21日を加算しています。
