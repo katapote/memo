@@ -1130,3 +1130,86 @@ End Sub
 このコードを実行すると、指定した日付から指定した日数後の日付が計算され、メッセージボックスで表示されます。
 
 日数を他の値に変更することで、任意の日数後の日付を取得できます。例えば、3週間後の日付を取得する場合は、`daysToAdd = 21`として21日を加算しています。
+
+入社日と退社日から勤続日数を計算し、その結果を「勤続日数」フィールドに日数として表示するVBAコードを紹介します。このコードは、勤続日数を入社日と退社日フィールドの隣に表示します。日数は日付形式ではなく、単純に「何日間」という数値として表示します。
+
+以下にコードの例を示します。
+
+```vba
+Sub CalculateServiceDays()
+    Dim lastRow As Long
+    Dim i As Long
+    Dim startDate As Date
+    Dim endDate As Date
+    Dim serviceDays As Long
+    
+    ' 入社日フィールドはA列、退社日フィールドはB列にあると仮定
+    lastRow = Cells(Rows.Count, 1).End(xlUp).Row
+    
+    ' 各行の入社日と退社日から勤続日数を計算
+    For i = 1 To lastRow
+        ' A列の入社日、B列の退社日を取得
+        startDate = Cells(i, 1).Value
+        endDate = Cells(i, 2).Value
+        
+        ' 勤続日数を計算
+        If IsDate(startDate) And IsDate(endDate) Then
+            serviceDays = endDate - startDate
+        Else
+            serviceDays = 0 ' 日付が無効な場合は0日とする
+        End If
+        
+        ' 計算結果をC列（勤続日数フィールド）に表示
+        Cells(i, 3).Value = serviceDays
+    Next i
+End Sub
+```
+
+### 説明:
+- **startDate**: 入社日 (`A列`) を取得します。
+- **endDate**: 退社日 (`B列`) を取得します。
+- **serviceDays**: `endDate - startDate` で勤続日数を計算します。
+- **Cells(i, 3).Value = serviceDays**: 計算された勤続日数を `C列` に表示します。
+
+### 実行例:
+1. 入社日が `A1` セル、退社日が `B1` セルにあると仮定します。
+2. 勤続日数は `C1` セルに表示されます。
+3. この処理がデータが存在する最終行 (`lastRow`) まで繰り返されます。
+
+このコードを実行すると、入社日と退社日を基に、勤続日数が日数として計算され、各行の `C列` に表示されます。
+
+
+500行ほど並んでいる日付データを、すべて「yyyy/mm/dd」の形式から「yyyyMM」の形式の数値に変換するには、以下のVBAコードを使用できます。このコードでは、日付データがA列にあり、変換後の結果も同じセルに上書きされると仮定しています。
+
+```vba
+Sub ConvertDatesToYearMonth()
+    Dim lastRow As Long
+    Dim i As Long
+    Dim dateValue As Date
+    Dim yearMonthValue As String
+    
+    ' A列の最終行を取得
+    lastRow = Cells(Rows.Count, 1).End(xlUp).Row
+    
+    ' A列の各セルに対して変換処理を行う
+    For i = 1 To lastRow
+        ' A列のセルの値を日付として取得
+        dateValue = Cells(i, 1).Value
+        
+        ' 年月のみを数値として取得（例: 2024年4月の場合は202404）
+        yearMonthValue = Format(dateValue, "yyyymm")
+        
+        ' 変換した結果を同じセルに上書き
+        Cells(i, 1).Value = yearMonthValue
+    Next i
+End Sub
+```
+
+### 説明:
+- `lastRow`: A列の最終行を取得します。これにより、データがどこまで続いているかが自動的に判別されます。
+- `For i = 1 To lastRow`: A列の1行目から最終行までをループします。
+- `dateValue = Cells(i, 1).Value`: 現在のセルの値を日付として取得します。
+- `yearMonthValue = Format(dateValue, "yyyymm")`: 取得した日付を「yyyyMM」形式の文字列に変換します。
+- `Cells(i, 1).Value = yearMonthValue`: 変換結果を同じセルに上書きします。
+
+このコードを実行することで、A列のすべての日付データが「yyyyMM」形式に置き換わります。
