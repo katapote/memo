@@ -1375,3 +1375,77 @@ https://www.re-quest2.jp/login.html?login=staff
 - 研修日より30日前後のデータを取得する際は、各クエリで適切な条件（例: `研修日 ± 30日`）を設定してデータをフィルタリングします。
 
 これらのフィールド設計が、目的に合致しているか確認いただき、必要な変更があれば教えてください。
+
+
+Microsoft Access DAOを使用して、既存のテーブルに新しい日付型フィールドを追加し、そのフィールドに数値型フィールドのデータを変換して挿入した後、処理が完了したらその新しいフィールドを削除する方法を説明します。
+
+### 手順1: 新しい日付型フィールドを追加
+既存のテーブルに新しい日付型フィールドを追加し、数値型フィールドのデータを日付型に変換してそのフィールドに挿入します。
+
+```vba
+Sub AddDateFieldAndInsertData()
+    Dim db As DAO.Database
+    Dim tbl As DAO.TableDef
+    Dim strSQL As String
+    
+    Set db = CurrentDb
+    Set tbl = db.TableDefs("YourTableName")
+    
+    ' 新しい日付型フィールドを追加
+    tbl.Fields.Append tbl.CreateField("NewDateField", dbDate)
+    
+    ' 数値型フィールドを日付型に変換して新しいフィールドに挿入
+    strSQL = "UPDATE YourTableName SET NewDateField = DateSerial(Left([YourNumericField], 4), Mid([YourNumericField], 5, 2), Right([YourNumericField], 2))"
+    db.Execute strSQL, dbFailOnError
+End Sub
+```
+
+### 手順2: 新しいフィールドを使用して処理を行う
+新しく追加した日付型フィールドを利用して、他のテーブルにデータを挿入するなどの処理を行います。例として、カレントDBの別のテーブルにデータをインサートする処理を示します。
+
+```vba
+Sub InsertDataIntoAnotherTable()
+    Dim db As DAO.Database
+    Dim strSQL As String
+    
+    Set db = CurrentDb
+    
+    ' 別のテーブルにデータをインサート
+    strSQL = "INSERT INTO AnotherTableName (DateField) SELECT NewDateField FROM YourTableName"
+    db.Execute strSQL, dbFailOnError
+End Sub
+```
+
+### 手順3: 追加したフィールドを削除
+処理が完了したら、新しく追加した日付型フィールドを削除します。
+
+```vba
+Sub DeleteNewDateField()
+    Dim db As DAO.Database
+    Dim tbl As DAO.TableDef
+    
+    Set db = CurrentDb
+    Set tbl = db.TableDefs("YourTableName")
+    
+    ' 追加したフィールドを削除
+    tbl.Fields.Delete "NewDateField"
+End Sub
+```
+
+### 完全な処理の流れ
+上記の処理を順番に実行することで、フィールドの追加、データの変換・挿入、フィールドの削除が行えます。
+
+```vba
+Sub CompleteProcess()
+    ' 手順1: 新しいフィールドを追加し、データを変換して挿入
+    AddDateFieldAndInsertData
+    
+    ' 手順2: カレントDBの別のテーブルにデータをインサート
+    InsertDataIntoAnotherTable
+    
+    ' 手順3: 追加したフィールドを削除
+    DeleteNewDateField
+End Sub
+```
+
+このコードを実行することで、必要な処理がすべて行われます。コード内の`YourTableName`、`YourNumericField`、および`AnotherTableName`は、実際のテーブル名とフィールド名に置き換えて使用してください。
