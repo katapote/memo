@@ -1449,3 +1449,54 @@ End Sub
 ```
 
 このコードを実行することで、必要な処理がすべて行われます。コード内の`YourTableName`、`YourNumericField`、および`AnotherTableName`は、実際のテーブル名とフィールド名に置き換えて使用してください。
+
+
+レコードセットを使用してデータを加工する方法は、場合によっては効率的で柔軟な手法になることがあります。特に、全体のテーブルに対して大きな変更を加える必要がない場合や、特定の条件に基づいてデータを加工したい場合に効果的です。
+
+### レコードセットを使った方法
+
+1. **レコードセットを作成**:
+   テーブルからレコードセットを作成し、その中で数値型フィールドを日付型に変換します。
+
+2. **レコードセット内で処理**:
+   レコードセットをループし、各レコードの数値型データを日付型に変換し、必要な処理を行います。
+
+3. **処理結果を別のテーブルに挿入**:
+   必要であれば、変換したデータを別のテーブルにインサートします。
+
+### サンプルコード
+
+```vba
+Sub ProcessDateInRecordset()
+    Dim db As DAO.Database
+    Dim rs As DAO.Recordset
+    Dim dtConverted As Date
+    
+    Set db = CurrentDb
+    Set rs = db.OpenRecordset("YourTableName", dbOpenDynaset)
+    
+    ' レコードセットのループ
+    Do While Not rs.EOF
+        ' 数値型フィールドを日付型に変換
+        dtConverted = DateSerial(Left(rs!YourNumericField, 4), Mid(rs!YourNumericField, 5, 2), Right(rs!YourNumericField, 2))
+        
+        ' 必要な処理を実行（例: 新しいテーブルに挿入）
+        db.Execute "INSERT INTO AnotherTableName (DateField) VALUES (#" & dtConverted & "#)", dbFailOnError
+        
+        ' 次のレコードへ
+        rs.MoveNext
+    Loop
+    
+    ' クリーンアップ
+    rs.Close
+    Set rs = Nothing
+    Set db = Nothing
+End Sub
+```
+
+### レコードセットを使用するメリット
+- **処理が軽量**: テーブル全体に変更を加えるのではなく、レコードセット内で処理を行うため、テーブル全体をロックする必要がありません。
+- **柔軟性**: 特定の条件に基づいてフィルタリングやデータ加工が簡単に行えます。
+- **パフォーマンス**: 小規模なテーブルや条件に基づいた処理では、レコードセットを使用する方が高速である場合があります。
+
+一方で、テーブル全体に対する一括変更が必要な場合や、大量のデータが存在する場合は、SQLクエリを使用した一括処理が適していることもあります。状況に応じて、どちらの方法が最適かを選ぶと良いでしょう。
