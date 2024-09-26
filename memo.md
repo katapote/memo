@@ -1735,3 +1735,36 @@ End Sub
 3. マクロを実行することで、自動的にカラムをエクスポートし、Accessにインポートされます。
 
 これにより、XLS形式のデータの特定カラムを新しいXLSXファイルにエクスポートし、そのデータをAccessにインポートする処理をVBAで自動化できます。
+    
+Sub SyncTables()
+    Dim db As DAO.Database
+    Dim rs As DAO.Recordset
+    Dim strSQL As String
+    Dim recordCount As Long
+
+    ' 現在のデータベースを取得
+    Set db = CurrentDb
+    
+    ' 重複しないレコードをもう片方のテーブルに挿入するループ
+    Do
+        ' 重複していないレコードをテーブルBに挿入するSQL
+        strSQL = "INSERT INTO TableB (FieldB1, FieldB2) " & _
+                 "SELECT FieldA1, FieldA2 " & _
+                 "FROM TableA " & _
+                 "LEFT JOIN TableB ON TableA.FieldA1 = TableB.FieldB1 " & _
+                 "WHERE TableB.FieldB1 IS NULL;"
+        
+        ' SQLクエリを実行
+        db.Execute strSQL, dbFailOnError
+        
+        ' 挿入されたレコード数を確認
+        recordCount = db.RecordsAffected
+        
+        ' 挿入されたレコードが0の場合、ループを終了
+        If recordCount = 0 Then
+            Exit Do
+        End If
+    Loop
+    
+    MsgBox "テーブル間の同期が完了しました。", vbInformation
+End Sub
